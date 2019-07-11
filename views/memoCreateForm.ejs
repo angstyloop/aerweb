@@ -1,0 +1,59 @@
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var quill = new Quill('#aa', {
+      modules: {
+        imageResize: {
+          displaySize: true
+          },
+        toolbar: [
+          ['bold', 'italic'],
+          ['link', 'blockquote', 'code-block', 'image'],
+          [{list: 'ordered'}, {list: 'bullet'}]
+        ]
+      },
+      placeholder: 'Compose an epic...',
+      theme: 'snow'
+    });
+</script>
+
+<script jsrc="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+
+<script type="text/javascript">
+
+  $(document).ready(function() {
+
+    $('#private-form').submit(function(event) {
+      event.preventDefault();
+      var contents = quill.root.innerHTML //get rid of backslashes
+      //var contents = JSON.stringify(quill.root.innerHTML);
+      $('#input-text').val(contents);
+      //$('#input-text').val(JSON.stringify(quill.getContents());
+      $.ajax({
+        type: 'POST',
+        url: '/memo/create',
+        data: $(this).serialize(),
+        dataType: 'json',
+        success: function(res) {
+          $('.ajax-content').load(window.clickedLink);
+          $('#private-form')[0].reset();
+        }
+      });
+    });
+
+  });
+</script>
+
+
+
+<div style="" id="aa"> // gotta make sure the wysiwyg editor is the same size as the memo!
+</div>
+
+<div class="form-group">
+  <form id="private-form" method="post" autocomplete="off">
+    <input type="textarea" id="input-text" name="input-text" class="form-control">
+    <input id='post-button' type="submit" value="Post" class="btn btn-info">
+  </form>
+</div>
+

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src='/javascripts/image-resize.min.js'></script>
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script type="text/javascript">
+    /* function definitions */
+    //////////////////////////
+
+    /*doc ready function*/
+  	$(document).ready( function() {
+
+      // save the clicked <a> element in the navbar in this variable. this will allow us to reload the current page's dynamic content to account for login/logout
+      // var clickedLink;
+      // use a global var instead so external scripts (for forms sent via ajax etc.) can see it
+     
+      $('dropdown-item').css('background-color', 'rgb(255, 255, 255)');
+      $('dropdown-item').css('color', 'rgb(0, 0, 0)');
+      $('nav-link').css('background-color', 'rgb(0, 0, 0)');
+      $('nav-link').css('color', 'rgb(255, 255, 255)');
+
+
+       /* load dynamic content on tab click, and save the clicked link. */
+      $('.ajax-link').click(function(e) {
+        e.preventDefault();
+        // if ($('.inverted')) {
+        //   // do stuff to previously clicked element
+        //   ;
+        // }
+        // switch the clicked class over to the new clicked element
+        if ($('.inverted')) {$('.inverted').removeClass('inverted');}
+        $(this).addClass('inverted');
+        // save the clicked element's href to global variable
+        window.clickedLink = $(this).attr('href');
+
+        // restore colors to clicked link ( they are inverted by .hover() )
+        if ($(this).hasClass('nav-link')) 
+          $(this).css({
+            // restore background and font color
+            'background-color': 'rgb(0, 0, 0)', //black
+            'color': 'rgb(255, 255, 255)'     //white
+          });
+        else
+          //restor font color only
+          $(this).css({
+            'color': 'rgb(0, 0, 0)' //black
+          });
+
+        // ajax request for dynamic content
+        $('.ajax-content').load(window.clickedLink);
+        $('.private-content').load(window.clickedLink + '/private');
+
+      });
+
+      /* hover. keep in mind current clicked element has class 'clicked' now */
+      $('.nav-link').hover(
+        function () {
+          // do stuff on mouse entry
+          // style clicked element by inverting the colors
+          $(this).css({
+            'background-color': 'rgb(255, 255, 255)',   // white background
+            'color': 'rgb(0, 0, 0)'  // black font color
+          });
+        }, 
+        function () {
+          // do stuff on mouse exit, depending on whether this element was clicked or not
+          if ($(this).hasClass('inverted')) {
+            // remove '.inverted' and do nothing else because the elm was styled by .click()
+            $(this).removeClass('inverted');
+          } else {
+            //restore style
+            $(this).css({
+              'background-color': 'rgb(0, 0, 0)', // black background
+              'color': 'rgb(255, 255, 255)' //white font color
+            });
+          }
+
+        });
+
+       /* hover. keep in mind current clicked element has class 'clicked' now */
+      $('.dropdown-item').hover(
+        function () {
+          // do stuff on mouse entry
+          // style clicked element by inverting the colors
+          // $(this).css({
+          //   background-color: 'rgb(255, 255, 255)',
+          //   color: 'rgb(0, 0, 0)'
+          // });
+          $(this).css({
+            'color': 'rgb(0, 0, 255)'  // blue font color
+          });
+        }, 
+        function () {
+          // do stuff on mouse exit, depending on whether this element was clicked or not
+          if ($(this).hasClass('inverted')) {
+            // remove '.inverted' and do nothing else because the elm was styled by .click()
+            $(this).removeClass('inverted');
+          } else {
+            //restore style
+            $(this).css({
+              'color': 'rgb(0, 0, 0)' //black font color
+            });
+          }
+
+        });
+
+       
+
+      /*Suppress default submit for our Login button, and instead POST request for /login route. Then handle response */
+      $("#form").submit(function(event) {
+        event.preventDefault();
+        
+        // make an AJAX POST request for /login route
+        $.ajax({
+          type: 'POST',
+          url: '/login',
+          data: $(this).serialize(),
+          dataType: 'json',
+          success: function(res){
+
+            // clear form fields
+            $('#form')[0].reset();
+
+            /*if response indicates we're logged in now, display a success message, and reload elements of class ajax-content. I gave res a property .success that is true or false.*/
+            if(res.success){
+
+              // show the success message for 2 seconds and then fade out
+              $('#login-success-message').show().delay(2000).fadeOut();
+
+              //reload private content
+              $('.private-content').load(window.clickedLink + '/private');
+
+              // hide the Login button and show the Logout button
+              $('#login-button').hide();
+              $('#logout-button').show();
+
+
+            }else{
+
+              // show login failure message for 2 seconds then fade
+              $('#login-failure-message').show().delay(2000).fadeOut();
+            }
+
+
+          }
+        });
+      });
+
+      $('#logout-button').click(function(event) {
+        event.preventDefault();
+        $.ajax({
+          type: 'GET',
+          url: '/logout',
+          success: function (res) {
+
+            // clear form fields
+            $('#form')[0].reset();
+
+            // server will handle any logout errors and destroy user session. it's our job here to reload dynamic content so that the filterPrivateContent() middleware function has a chance to do it's job.
+            if(res){
+              //reload dynamic content
+              $('.private-content').load(window.clickedLink+'/private');
+              //hide logout button and show login button
+              $('#logout-button').hide();
+              $('#login-button').show();
+
+            }else{
+              alert("Looks like we had some issues logging you out.");
+            }
+            
+
+          }
+        });
+      });
+
+  	});
+
+  	</script>
+  </head>
+  <body>
+    <!--<h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>-->
+    <nav class="navbar navbar-expand-sm text-white justify-content-between" style="background-color:black;">
+  		<!-- Brand -->
+  		<!--<a class="navbar-brand" href="#">Logo</a>-->
+
+  		<!-- Links -->
+  		<ul class="navbar-nav">
+    		<li class="nav-item">
+      			<a class="ajax-link nav-link" href="/content/1">Content 1</a>
+   		 	</li>
+    		<li class="nav-item">
+      			<a class="ajax-link nav-link" href="/content/2">Content 2</a>
+    		</li>
+
+    		<!-- Dropdown -->
+    		<li class="nav-item dropdown">
+      			<a class="ajax-link nav-link dropdown-toggle" href="/content/3" id="navbardrop" data-toggle="dropdown">
+       				Content 3
+      			</a>
+      			<div class="dropdown-menu">
+        			<a class="ajax-link dropdown-item" href="/content/3-1">Link 1</a>
+        			<a class="ajax-link dropdown-item" href="/content/3-2">Link 2</a>
+        			<a class="ajax-link dropdown-item" href="/content/3-3">Link 3</a>
+     			</div>
+    		</li>
+  		</ul>
+  		<form class="form-inline my-2 my-lg-0">
+      		<input id="search-bar" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      		<button id="search-bar-label" class="btn my-2 my-sm-0" type="submit"></button>
+    	</form>
+	</nav>
+	<br>
+
+  <div class="private-content"></div>
+	<div class="ajax-content"></div>
+
+	<footer class="page-footer text-white" style="background-color:black;">
+		<div class="container-fluid text-left tex-md-left"> <!--horiz align.-->
+			<div class="row">
+				<div class="col-sm-3 align-center"> <!--vertical alignment-->
+
+					<!--form goes here-->
+          <!--<div id="attempted-login-message"></div>-->
+          <div style="height: .5em">
+          <div id="login-success-message" style="display: none;">Login Success!</div>
+          <div id="login-failure-message" style="display: none;">Login Failure.</div>
+          </div>
+
+					<!--<form style="width: 150px" class='my-2'>
+						<div class="form-group">
+							<label for='username'>Username</label>
+							<input type="text" class="form-control" name='username' id='username' placeholder='Username'>
+						</div>
+
+						<div class="form-group">
+							<label for='password'>Password</label>
+							<input type="password" class="form-control" name='password' id='password' placeholder='Password'>
+						</div>
+
+						<input type='submit' class='btn btn-primary'>
+					</form>-->
+
+          <div class="form-group my-2">
+            <form id="form" method="post" >
+              <input type="text" id="username" name="username" placeholder="Username" required="" class="form-control"><br/>
+              <input type="password" id="password" name="password" placeholder="Password" required="" class="form-control"><br/>
+              <input id='login-button' type="submit" value="Login" class="btn btn-success">
+              <input style="display:none;" id="logout-button" type="button" value="Logout" class="btn btn-danger">
+            </form>
+          </div>
+
+
+				</div>
+				<div class="col-sm-11"></div>
+			</div>
+			
+		</div>
+	</footer>
+  </body>
+</html>

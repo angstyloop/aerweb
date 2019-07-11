@@ -1,0 +1,31 @@
+
+body {
+  /*padding: 50px;*/
+  /*font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;*/
+  font: 14px Georgia;
+}
+
+.nav-link {
+ 	color: white;
+ 	margin-right: 5px;
+ 	margin-left: 5px;
+}
+
+.dropdown-item{
+	/*background: white;
+	color: black;*/
+}
+
+#search-bar {
+	width:150px;
+}
+
+#search-bar-label {
+	color: white;
+}
+
+ .navbar {
+ 	min-height: 10px;
+ 	max-height:50px;
+ 	font-size: 16px;
+ }
