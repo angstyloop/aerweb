@@ -1,0 +1,55 @@
+<div class="container">
+	<div class="row">
+		<div class="col-sm-4">
+		</div>
+		<div class="col-sm-4 text-center">
+			<h1 style="font-size: 50px; color:RoyalBlue">News</h1>
+			<br/>
+		</div>
+		<div class="col-sm-4">
+		</div>
+	</div>
+</div>
+
+
+<% memos.forEach(function(memo){ %>
+	<div class="container-fluid">
+		<div class="row" style="text-align: center">
+			<div class="col-sm-1" >
+			</div>
+			<div class="col-sm-2" style="text-align:center; display: inline-block;">
+				<div class="row" style="font-size:45px; width: 100px; height: 50px; text-align: center; display: inline-block;">
+					<div style="text-align: center; display: inline-block; ">
+						<div style="text-align: center; display: inline-block; color: RoyalBlue">
+							<%= memo.date.getDate() %>
+						</div>
+					</div>
+				</div>
+				<div class="row" style="height: 40px; font-size: 20px; text-align: center; display: inline-block;">
+					<div style="text-align: center; display: inline-block;">
+						<div style="text-align: center; display: inline-block; color: RoyalBlue">
+						<% months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"] %>
+							<%= months[memo.date.getMonth()] %>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-1">
+			</div>
+			<div class="col-sm-7">
+				<div class="align-top row" style="min-height:100; text-align: left">
+					<div style="margin-top: 14px; display: inline-block; ">
+					<%- memo.body %>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-1">
+			</div>
+		</div>
+		<br>
+	</div>
+
+<%})%>
+
+
+	
