@@ -1,5 +1,6 @@
 var express = require('express');
 var Memo = require('../models/memo');
+var Member = require('../models/member')
 var router = express.Router();
 var User = require('../models/user');
 var uuidv4 = require('uuid/v4');
@@ -43,7 +44,10 @@ router.get('/content/2', (req,res)=>{
 });
 
 router.get('/content/3-1', (req,res)=>{
-	res.render('content/3-1')
+	Member.find({}).sort({name:-1}).exec( (err,members) => {
+		console.log(members);
+		res.render('content/3-1', {members: members})
+	})
 });
 
 router.get('/content/3-2', (req,res)=>{
@@ -158,10 +162,14 @@ router.get('/logout', function (req, res, next) {
 	});
 });
 
-// this was for testing
-// router.post('/create', function(req,res) {
-// 	res.send({'input-text': req.body['input-text']});
-// })
+// these routes define some useful test API
+router.get('/addtestmember', (req,res)=>{
+	const testMember = Member({name: 'tes t. name', email: 'test@email.com', bio: 'this was a test'})
+	testMember.save((err,member)=>{
+		if (err) {return console.error(err)};
+		console.log("Successfully saved test member to database.\n" + member)
+	})
+})
 
 
 module.exports = router;

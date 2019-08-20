@@ -1,1 +1,30 @@
-<h1> coming soon </h1>
+<br/>
+<br/>
+<br/>
+<div class="container" style="text-align:center">
+	<div class="row">
+		<div class="col-sm-2">
+		</div>
+		<div class="col-sm-8" style="display: inline-block; text-align: left">
+			<% members.forEach(function(member){ %>
+				<div class="media">
+				  <img class="align-self-start"style="width:100px;height:100px;"class="mr-1" src="images/cartman.jpg" alt="Generic placeholder image">
+				  <div class="media-body" style="margin-left:50px; display: inline-block">
+				    <span style="font-size: 18px"><%- member.name %></span>
+				    <br/>
+				    <br/>
+				    <span style="font-style: italic; font-size: 12px"><%- member.email %></span>
+				    <br/>
+				    <br/>
+				    <p style="font-width:14px"><%- member.bio %></p>
+				  </div>
+				</div>
+				<br/>
+				<br/>
+				<br/>
+			<%})%>
+		</div>
+		<div class="col-sm-2">
+		</div>
+	</div>
+</div>
