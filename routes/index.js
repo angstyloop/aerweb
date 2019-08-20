@@ -42,6 +42,18 @@ router.get('/content/2', (req,res)=>{
 	})
 });
 
+router.get('/content/3-1', (req,res)=>{
+	res.render('content/3-1')
+});
+
+router.get('/content/3-2', (req,res)=>{
+	res.render('content/3-2')
+});
+
+router.get('/content/3-3', (req,res)=>{
+	res.render('content/3-3')
+});
+
 router.get('/content/1/private', filterPrivateContent, function(req,res) {
 	res.render('memoCreateForm');
 });
