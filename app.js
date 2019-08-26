@@ -14,7 +14,12 @@ var indexRouter = require('./routes/index');
 var memoRouter = require('./routes/memo');
 
 // note that connect will create local db if it doesn't exist.
-mongoose.connect('mongodb://localhost/aerdb', {useNewUrlParser: true})
+//mongoose.connect('mongodb://localhost/aerdb', {useNewUrlParser: true})
+
+var dev_db_url = 'mongodb+srv://admin:dotfivew@cluster0-viph9.mongodb.net/aerdb?retryWrites=true&w=majority'
+var mongoDB = process.env.MONGODB_URI || dev_db_url;
+
+mongoose.connect(mongoDB, {useNewUrlParser: true})
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
