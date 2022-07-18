@@ -20,7 +20,7 @@
     "express-generator": "^4.16.1",
     "express-session": "^1.16.2",
     "http-errors": "^1.6.3",
-    "jquery-ui": "^1.12.1",
+    "jquery-ui": "^1.13.2",
     "mongoose": "^5.6.1",
     "morgan": "^1.9.1",
     "nodemon": "^1.19.1",
